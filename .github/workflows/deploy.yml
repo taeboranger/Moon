@@ -9,22 +9,21 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@main
-      - name: set up node.js
+      - name: nodejs setting
         uses: actions/setup-node@main
         with:
           node-version: 16.x
-      - name: cache node_modules
+      - name: caching node modules
         uses: actions/cache@v1
         with: 
           path: node_modules
           key: $-build-$${hashFiles('**/package-lock.json')}
-          restore-keys: |
-            $-build-$-build
-      - name: install devDependencies
+          restore-keys: $-build-$-build
+      - name: npm install dependencies
         run: npm install
-      - name: build
+      - name: build (npm run)
         run: npm run
-      - name: deploy
+      - name: deploy page
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_ACTIONS_TOKEN }}
