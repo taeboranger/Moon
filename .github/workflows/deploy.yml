@@ -1,29 +1,30 @@
-name: Deploy
-
-on:
-  push:
+name: Build and deploy
+on: 
+  push: 
     branches:
       - master
 
-jobs:
-  deploy:
+jobs: 
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Node.js
-        uses: actions/setup-node@v3
+    steps: 
+      - uses: actions/checkout@main
+      - name: set up node.js
+        uses: actions/setup-node@main
         with:
-          node-version: 12.x
-
-      - name: Install Dependencies
+          node-version: 16.x
+      - name: cache node_modules
+        uses: actions/cache@v1
+        with: 
+          path: node_modules
+          key: $-build-$${hashFiles('**/package-lock.json')}
+          restore-keys: |
+            $-build-$-build
+      - name: install devDependencies
         run: npm install
-
-      - name: Build Docs
-        run: npm run build.docs
-
-      - name: Deploy Docs
+      - name: build
+        run: npm run prod
+      - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_ACTIONS_TOKEN }}
